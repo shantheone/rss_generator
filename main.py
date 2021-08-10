@@ -48,13 +48,13 @@ def retroland_main():
 
         lead = element.find('p', class_='lead')
 
+        lead_text = lead.text.replace('tovább...', )
+
         fe.title(title.text)
         fe.description("<p><img src=" + '"' + image_url + '"' + "/></p>" + lead.text)
-        # print("<p><img src=" + '"' + image_url + '"' + "/></p>" + lead.text)
-        # fe.enclosure(url=feed_url + image_url, type="image")
         fe.link(href=article_url)
 
-    fg.rss_file('retroland.xml')  # Write the RSS feed to a file
+    # fg.rss_file('retroland.xml')  # Write the RSS feed to a file
 
 
 def retroland_napi():
