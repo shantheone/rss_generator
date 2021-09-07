@@ -54,7 +54,7 @@ def retroland_main():
         fe.description("<p><img src=" + '"' + image_url + '"' + "/></p>" + lead_text)
         fe.link(href=article_url)
 
-    fg.rss_file('retroland.xml')  # Write the RSS feed to a file
+    fg.rss_file('retroland.xml', pretty=True)  # Write the RSS feed to a file
 
 
 def retroland_napi():
