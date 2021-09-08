@@ -4,6 +4,7 @@ import cssutils
 
 from feedgen.feed import FeedGenerator
 from bs4 import BeautifulSoup
+from urllib3.filepost import encode_multipart_formdata
 
 
 def retroland_main():
@@ -54,7 +55,7 @@ def retroland_main():
         fe.description("<p><img src=" + '"' + image_url + '"' + "/></p>" + lead_text)
         fe.link(href=article_url)
 
-    fg.rss_file('retroland.xml', pretty=True)  # Write the RSS feed to a file
+    fg.rss_file('retroland-main.xml', pretty=True)  # Write the RSS feed to a file
 
 
 def retroland_napi():
@@ -68,8 +69,8 @@ def retroland_napi():
     # run it through the html.parser
     soup = BeautifulSoup(html_text, 'html.parser')
 
-    # find articlebox css class (this is where the articles are stored)
-    div_dailylist = soup.findAll('div', id='dailyList')
+    # find articleBody itemprop (this is where the articles are stored)
+    div_columnns = soup.findAll('div', itemprop='articleBody')
 
     # create feedgenerator
     fg = FeedGenerator()
@@ -80,34 +81,29 @@ def retroland_napi():
     fg.language('hu')
 
     # iterate through all of the elements
-    for element in div_dailylist:
+    for element in div_columnns:
         # add each new item to the feed
         fe = fg.add_entry()
 
-        title = "retro.land - napi retro cikk"
-
-        # for the image links we'll have to use the cssutils module
-        # image = element.find('a')['style']
-        # style = cssutils.parseStyle(image)
-        # image_url = style['background-image']
-        # adding the feed_url to the beginning of the image link so it will work correctly in the feed
-        # image_url = image_url.replace('url(', feed_url).replace(')', '')
-        # print('Image url :', image_url)
-
-        article_url = element.find('a', class_='more', href=True)
-        article_url = feed_url + article_url['href']
-
-        lead = element.find('p', class_='lead')
-
-        fe.title(title.text)
-        fe.description(lead.text)
-        # fe.id(article_url)
-        # fe.enclosure(url='"' + image_url + '"', type="image")
+        article_url = element.find('p', class_='note')
+        article_url = str(article_url)
+        article_url = "https://retro.land" + (article_url.split('=')[3]).split('"')[1]
         fe.link(href=article_url)
+        fe.id(article_url)
 
-    fg.rss_file('rss.xml')  # Write the RSS feed to a file
+        lead = element.find('p')
+
+        fe.title(element.find('img')['title'])
+
+        enclosure = element.find('img')['src']
+        enclosure = "https://retro.land" + enclosure
+        fe.enclosure(url='"' + enclosure + '"', type="image")
+
+        fe.description("<p><img src=" + '"' + enclosure + '"' + "/></p>" + lead.text)
+
+    fg.rss_file('retroland-daily.xml', pretty=True)  # Write the RSS feed to a file
 
 
 if __name__ == '__main__':
     retroland_main()
-    # retroland_napi()
+    retroland_napi()
