@@ -84,9 +84,21 @@ def retroland_napi():
         # add each new item to the feed
         fe = fg.add_entry()
 
-        article_url = element.find('p', class_='note')
-        article_url = str(article_url)
-        article_url = "https://retro.land" + (article_url.split('=')[3]).split('"')[1]
+        article_url_all = element.findAll('p', class_='note')
+
+        for article_url_element in article_url_all:
+            article_url_element.find('a')
+            print(article_url_element)
+            if (len(str(article_url_element)) != 0) and str((article_url_element.split('=')[3]).split('"')[1].startswith('/')):
+                print(article_url_element)
+                article_url = str(article_url_element)
+        
+        # article_url = element.find('p', class_='note')
+        # article_url = str(article_url)
+        
+        # article_url = "https://retro.land" + (article_url.split('=')[3]).split('"')[1]
+        # print(article_url)
+
         fe.link(href=article_url)
         fe.id(article_url)
 
@@ -105,9 +117,9 @@ def retroland_napi():
 
         fe.description("<p><img src=" + '"' + enclosure + '"' + "/></p>" + lead_text)
 
-    fg.rss_file('retroland-daily.xml', pretty=True)  # Write the RSS feed to a file
+    # fg.rss_file('retroland-daily.xml', pretty=True)  # Write the RSS feed to a file
 
 
 if __name__ == '__main__':
-    retroland_main()
+    # retroland_main()
     retroland_napi()
