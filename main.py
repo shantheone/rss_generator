@@ -1,4 +1,3 @@
-import datetime
 import urllib3
 import cssutils
 
