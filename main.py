@@ -90,7 +90,12 @@ def retroland_napi():
         fe.link(href=article_url)
         fe.id(article_url)
 
-        lead = element.find('p')
+        lead = element.findAll('p')
+
+        for lead_element in lead:
+            lead_element.find('p', class_='')
+            if (not lead_element.text.startswith('Forrás')) and (len(lead_element.text) != 0):
+                lead_text = lead_element.text
 
         fe.title(element.find('img')['title'])
 
@@ -98,7 +103,7 @@ def retroland_napi():
         enclosure = "https://retro.land" + enclosure
         fe.enclosure(url=enclosure, type="image")
 
-        fe.description("<p><img src=" + '"' + enclosure + '"' + "/></p>" + lead.text)
+        fe.description("<p><img src=" + '"' + enclosure + '"' + "/></p>" + lead_text)
 
     fg.rss_file('retroland-daily.xml', pretty=True)  # Write the RSS feed to a file
 
