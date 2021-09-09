@@ -84,20 +84,15 @@ def retroland_napi():
         # add each new item to the feed
         fe = fg.add_entry()
 
-        article_url_all = element.findAll('p', class_='note')
+        article_url_all = element.findAll('a')
+        if (len(article_url_all) == 2):
+            article_url = str(article_url_all[1])
+        else:
+            article_url = article_url_all
 
-        for article_url_element in article_url_all:
-            article_url_element.find('a')
-            print(article_url_element)
-            if (len(str(article_url_element)) != 0) and str((article_url_element.split('=')[3]).split('"')[1].startswith('/')):
-                print(article_url_element)
-                article_url = str(article_url_element)
-        
-        # article_url = element.find('p', class_='note')
-        # article_url = str(article_url)
-        
-        # article_url = "https://retro.land" + (article_url.split('=')[3]).split('"')[1]
-        # print(article_url)
+        print(article_url)
+        article_url = "https://retro.land" + (article_url.split('=')[1]).split('"')[1]
+        print(article_url)
 
         fe.link(href=article_url)
         fe.id(article_url)
