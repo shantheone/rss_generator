@@ -108,7 +108,7 @@ def retroland_napi():
 
         enclosure = element.find('img')['src']
         enclosure = "https://retro.land" + enclosure
-        fe.enclosure(url=enclosure, type="image")
+        fe.enclosure(url=enclosure, type="image/jpg")
 
         fe.description("<p><img src=" + '"' + enclosure + '"' + "/></p>" + lead_text)
 
