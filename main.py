@@ -88,11 +88,13 @@ def retroland_napi():
         if (len(article_url_all) == 2):
             article_url = str(article_url_all[1])
         else:
-            article_url = article_url_all
+            article_url = str(article_url_all)
 
-        print(article_url)
-        article_url = "https://retro.land" + (article_url.split('=')[1]).split('"')[1]
-        print(article_url)
+        if (article_url.endswith('>')):
+            article_url = "https://retro.land" + (article_url.split('=')[1]).split('"')[1]
+        
+        if (article_url.endswith(']')):
+            article_url = "https://retro.land/" + (article_url.split('<a href="/')[1].split('"')[0])
 
         fe.link(href=article_url)
         fe.id(article_url)
@@ -108,13 +110,12 @@ def retroland_napi():
 
         enclosure = element.find('img')['src']
         enclosure = "https://retro.land" + enclosure
-        fe.enclosure(url=enclosure, type="image/jpg")
 
         fe.description("<p><img src=" + '"' + enclosure + '"' + "/></p>" + lead_text)
 
-    # fg.rss_file('retroland-daily.xml', pretty=True)  # Write the RSS feed to a file
+    fg.rss_file('retroland-daily.xml', pretty=True)  # Write the RSS feed to a file
 
 
 if __name__ == '__main__':
-    # retroland_main()
+    retroland_main()
     retroland_napi()
