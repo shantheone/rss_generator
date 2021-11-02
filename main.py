@@ -62,17 +62,14 @@ def retroland_napi():
     # urllib3
     http = urllib3.PoolManager()
 
-    # url to generate feed from
+    # URL to generate feed from
     feed_url = 'https://retro.land/napi-retro'
-    # get contents of webpage in utf-8
+    # Get contents of webpage in utf-8
     html_text = http.request('GET', feed_url).data.decode('utf-8')
-    # run it through the html.parser
+    # Run it through the html.parser
     soup = BeautifulSoup(html_text, 'html.parser')
 
-    # find articleBody itemprop (this is where the articles are stored)
-    div_columnns = soup.findAll('div', itemprop='articleBody')
-
-    # create feedgenerator
+    # Create feedgenerator
     fg = FeedGenerator()
     fg.id(feed_url)
     fg.title('Retro Land - Napi Retro')
@@ -80,39 +77,48 @@ def retroland_napi():
     fg.subtitle('Retro Land - Napi Retro')
     fg.language('hu')
 
-    # iterate through all of the elements
-    for element in div_columnns:
-        # add each new item to the feed
-        fe = fg.add_entry()
+    # Array to hold article dictionary
+    daily_articles = []
 
-        article_url_all = element.findAll('a')
-        if (len(article_url_all) == 2):
-            article_url = str(article_url_all[1])
-        else:
-            article_url = str(article_url_all)
+    # Generate the article URL
+    for div in soup.findAll('p', attrs={'class':'note'}):
+        notes = str(div)
+        if notes.__contains__("napi-retro"):
+            article_dict = {"url": "https://retro.land/napi-retro" + notes.split("napi-retro")[1].split('"')[0]}
+            daily_articles.append(article_dict)
 
-        if (article_url.endswith('>')):
-            article_url = "https://retro.land" + (article_url.split('=')[1]).split('"')[1]
+    # Generate article content
+    i = 0
+    for div in soup.findAll('div', attrs={'class':['editable component', 'cols component']}):
+        # Image
+        image = "https://retro.land/" + (str(div).split('src=')[1].split('../../../../')[1])[:-2]
+        daily_articles[i].update({"image": image})
         
-        if (article_url.endswith(']')):
-            article_url = "https://retro.land/" + (article_url.split('<a href="/')[1].split('"')[0])
+        # Lead text
+        daily_articles[i].update({"lead": div.text})
+        
+        # Title
+        title = (str(div).split("title")[1]).split('"')[1]
+        daily_articles[i].update({"title": title})
+        
+        # Increment the array index by 1
+        i += 1
 
-        fe.link(href=article_url)
-        fe.id(article_url)
-
-        lead = element.findAll('p')
-
-        for lead_element in lead:
-            lead_element.find('p', class_='')
-            if (not lead_element.text.startswith('Forrás')) and (len(lead_element.text) != 0):
-                lead_text = lead_element.text
-
-        fe.title(element.find('img')['title'])
-
-        enclosure = element.find('img')['src']
-        enclosure = "https://retro.land" + enclosure
-
-        fe.description("<p><img src=" + '"' + enclosure + '"' + "/></p>" + lead_text)
+    # Build the rest of the feed
+    for item in daily_articles:
+        fe = fg.add_entry()
+        description = ''
+        for key,value in item.items():
+            if key == 'url':
+                fe.link(href=value)
+                fe.id(value)
+            if key == 'title':
+                fe.title(value)
+            if key == 'image':
+                description = "<p><img src=" + '"' + value + '"' + "/></p>"
+            if key == 'lead':
+                description = description + value
+                fe.description(description)
 
     fg.rss_file('retroland-daily.xml', pretty=True)  # Write the RSS feed to a file
 

@@ -53,6 +53,8 @@ def retroland_napi():
                 print(value)
             if key == 'lead':
                 print(value)
+            if key == 'image':
+                print(value)
            
         print()
 
