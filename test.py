@@ -6,11 +6,6 @@ from feedgen.feed import FeedGenerator
 from bs4 import BeautifulSoup
 from urllib3.filepost import encode_multipart_formdata
 
-@dataclass
-class article:
-    url: str
-    lead: str
-
 def retroland_napi():
     # urllib3
     http = urllib3.PoolManager()
@@ -27,12 +22,13 @@ def retroland_napi():
     # URL
     for div in soup.findAll('p', attrs={'class':'note'}):
         notes = str(div)
-        if notes.__contains__("jelenleg"):
-            article_dict = {"url": "https://retro.land" + (notes.split("jelenleg")[1]).split('"')[1]}
+        if notes.__contains__("napi-retro"):
+            article_dict = {"url": "https://retro.land/napi-retro" + notes.split("napi-retro")[1].split('"')[0]}
             daily_articles.append(article_dict)
 
     # Article content
     i = 0
+
     for div in soup.findAll('div', attrs={'class':['editable component', 'cols component']}):
         # Image
         image = "https://retro.land/" + (str(div).split('src=')[1].split('../../../../')[1])[:-2]
@@ -48,10 +44,16 @@ def retroland_napi():
         # Increment the array index by 1
         i += 1
 
+
     for item in daily_articles:
         for key,value in item.items():
-            print(key, ':', value)
-            
+            if key == 'url':
+                print(value)
+            if key == 'title':
+                print(value)
+            if key == 'lead':
+                print(value)
+           
         print()
 
 
