@@ -1,3 +1,4 @@
+from xml.etree.ElementTree import tostring
 import urllib3
 import cssutils
 
@@ -95,7 +96,7 @@ def retroland_napi():
         daily_articles[i].update({"image": image})
         
         # Lead text
-        daily_articles[i].update({"lead": div.text})
+        daily_articles[i].update({"lead": div})
         
         # Title
         title = (str(div).split("title")[1]).split('"')[1]
@@ -117,7 +118,7 @@ def retroland_napi():
             if key == 'image':
                 description = "<p><img src=" + '"' + value + '"' + "/></p>"
             if key == 'lead':
-                description = description + value
+                description = description + str(value)
                 fe.description(description)
 
     fg.rss_file('retroland-daily.xml', pretty=True)  # Write the RSS feed to a file
