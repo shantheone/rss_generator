@@ -91,10 +91,6 @@ def retroland_napi():
     # Generate article content
     i = 0
     for div in soup.findAll('div', attrs={'class':['editable component', 'cols component']}):
-        # Image
-        image = "https://retro.land/" + (str(div).split('src=')[1].split('../../../../')[1])[:-2]
-        daily_articles[i].update({"image": image})
-        
         # Lead text
         daily_articles[i].update({"lead": div})
         
@@ -115,8 +111,6 @@ def retroland_napi():
                 fe.id(value)
             if key == 'title':
                 fe.title(value)
-            if key == 'image':
-                description = "<p><img src=" + '"' + value + '"' + "/></p>"
             if key == 'lead':
                 description = description + str(value)
                 fe.description(description)
