@@ -93,11 +93,11 @@ def retroland_napi():
     for div in soup.findAll('div', attrs={'class':['editable component', 'cols component']}):
         # Lead text
         daily_articles[i].update({"lead": div})
-        
+
         # Title
         title = (str(div).split("title")[1]).split('"')[1]
         daily_articles[i].update({"title": title})
-        
+
         # Increment the array index by 1
         i += 1
 
