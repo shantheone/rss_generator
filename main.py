@@ -1,10 +1,8 @@
-from xml.etree.ElementTree import tostring
 import urllib3
 import cssutils
 
 from feedgen.feed import FeedGenerator
 from bs4 import BeautifulSoup
-from urllib3.filepost import encode_multipart_formdata
 
 
 def retroland_main():
@@ -90,11 +88,11 @@ def retroland_napi():
 
     # Generate article content
     i = 0
-    for div in soup.findAll('div', attrs={'class':['editable component', 'cols component']}):
+    for div in soup.findAll('div', attrs={'itemprop':['articleBody']}):
         # Lead text
         daily_articles[i].update({"lead": div})
 
-        # Title
+        # title
         title = (str(div).split("title")[1]).split('"')[1]
         daily_articles[i].update({"title": title})
 
