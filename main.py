@@ -33,13 +33,11 @@ def retroland_main():
         fe = fg.add_entry()
 
         title = element.find('a', class_='title')
-
         # for the image links we'll have to use the cssutils module
-        image = element.find('a')['style']
-        style = cssutils.parseStyle(image)
-        image_url = style['background-image']
+        image = element.find('a', class_='image')
+        # print(str(image).split("src=")[1].split('"')[1])
+        image_url = "https://retro.land" + str(image).split("src=")[1].split('"')[1]
         # adding the feed_url to the beginning of the image link so it will work correctly in the feed
-        image_url = image_url.replace('url(', '').replace(')', '')
 
         # creating article url
         article_url = element.find('a', class_='more', href=True)
